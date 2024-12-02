@@ -1,11 +1,9 @@
 #!/bin/sh -l
 
-echo "Inputs and Environment Variables:"
-env
-
 PIPELINE_NAME=$1
 BRANCH_OR_TAG=$2
 
+# Debugging: Print received inputs
 echo "Pipeline Name: $PIPELINE_NAME"
 echo "Branch or Tag: $BRANCH_OR_TAG"
 
