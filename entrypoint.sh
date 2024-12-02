@@ -1,17 +1,13 @@
 #!/bin/sh -l
 
-set -e
-
-if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ] || [ -z "$AWS_REGION" ]; then
-  echo "AWS credentials and region must be set as environment variables."
-  exit 1
-fi
-
-export AWS_REGION=$AWS_REGION
-export AWS_DEFAULT_REGION=$AWS_REGION
+echo "Inputs and Environment Variables:"
+env
 
 PIPELINE_NAME=$1
 BRANCH_OR_TAG=$2
+
+echo "Pipeline Name: $PIPELINE_NAME"
+echo "Branch or Tag: $BRANCH_OR_TAG"
 
 if [ -z "$PIPELINE_NAME" ]; then
   echo "Pipeline name must be provided."
@@ -23,12 +19,12 @@ if [ -z "$BRANCH_OR_TAG" ]; then
   exit 1
 fi
 
-# Trigger AWS CodePipeline with parameter overrides
-echo "Triggering AWS CodePipeline: $PIPELINE_NAME with branch/tag: $BRANCH_OR_TAG"
-EXECUTION_ID=$(aws codepipeline start-pipeline-execution \
+# Trigger the AWS CodePipeline
+aws codepipeline start-pipeline-execution \
   --name "$PIPELINE_NAME" \
+  --query 'pipelineExecutionId' \
   --region "$AWS_REGION" \
-  --query 'pipelineExecutionId' --output text)
+  --output text
 
 if [ $? -eq 0 ]; then
   echo "Successfully triggered pipeline. Execution ID: $EXECUTION_ID"
